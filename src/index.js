@@ -1,5 +1,7 @@
-import * as THREE from 'js/three.module.js';
+import * as THREE from 'three';
+import './styles/base.less';
 
+console.log(VERSION, NODE_ENV)
 
 var camera, scene, renderer;
 var geometry, material, mesh;
