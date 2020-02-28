@@ -1,24 +1,30 @@
 const merge = require('webpack-merge');
-// const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-// const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const webpack = require('webpack');
+// const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 // const CopyPlugin = require('copy-webpack-plugin');
-// const path = require('path');
+const { distResolve } = require('./unit.js');
 
 const base = require('./webpack.base.js');
 
-module.exports = merge(base, {
+module.exports = merge({
   mode: 'production',
   optimization: {
-    // minimizer: [new UglifyJsPlugin()],
+    // minimizer: [new ParallelUglifyPlugin()],
     splitChunks: {
-      // include all types of chunks
       chunks: 'all'
     },
   },
   plugins: [
-		// new CleanWebpackPlugin(),
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns: ['!*.dll.*'], // 不删除 dll 文件
+    }),
+    new webpack.DllReferencePlugin({
+      context: __dirname,
+      manifest: require(distResolve('./static/js/manifest.dll.json'))
+    })
     // new CopyPlugin([
-    //   { from: path.resolve(__dirname, 'src/public'), to: 'dist/public' },
+    //   { from: path.resolve(__dirname, '..', 'src/static'), to: path.resolve(__dirname, '..', 'dist/static') },
     // ]),
   ]
-});
+}, base);

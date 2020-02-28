@@ -1,80 +1,88 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin'); //通过 npm 安装
 const webpack = require('webpack');
 const HappyPack = require('happypack');
-const path = require('path');
-
-function resolve(dir) {
-  return path.join(__dirname, '..', dir)
-}
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { rootResolve } = require('./unit.js');
 
 module.exports = {
-  entry: './src/index.js',
-  output: {
-    filename: 'bundle.js',
-    path: resolve('dist')
-  },
-  resolve: {
-    extensions: ['.js', '.json'],
-    alias: {
-      '@': resolve('src'),
-      '@static': resolve('static'),
-    }
-  },
-  module: {
-    rules: [
-			// {
-			// 	test: /\.css$/,
-      //   exclude: /(node_modules|bower_components)/,
-			// 	use: 'css-loader'
-			// },
-      // {
-			// 	test: /\.ts$/,
-			// 	exclude: /(node_modules|bower_components)/,
-			// 	use: 'ts-loader'
-			// },
+	entry: './src/index.js',
+	output: {
+		filename: '[name].[hash:8].js',
+		path: rootResolve('dist')
+	},
+	resolve: {
+		extensions: ['.js', '.json'],
+		alias: {
+			'@': rootResolve('src'),
+			'@static': rootResolve('static'),
+		}
+	},
+	// externals: [''],
+	module: {
+		rules: [
 			{
 				test: /\.less$/,
 				exclude: /(node_modules|bower_components)/,
-				use: [
-					{
-						loader: 'happypack/loader',
-						options: {
-							id: 'less',
-							name: 'js/[hash:18].[ext]',
-							// publicPath: '/'
-						}
+				loaders: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'less-loader']
+			},
+			// {
+			// 	test: /\.less$/,
+			// 	exclude: /(node_modules|bower_components)/,
+			// 	use: [
+			// 		{
+			// 			loader: MiniCssExtractPlugin.loader
+			// 		},
+			// 		{
+			// 			loader: 'happypack/loader',
+			// 			options: {
+			// 				id: 'less',
+			// 				name: resolve('dist/js/[hash:8].[ext]'),
+			// 				// publicPath: '/'
+			// 			}
+			// 		}
+			// 	]
+			// },
+			{
+				test: /\.js$/,
+				exclude: /(node_modules|bower_components)/,
+				loader: 'happypack/loader',
+				options: {
+					id: 'babel',
+					name: rootResolve('dist/css/[hash:8].[ext]'),
+					// publicPath: '/'
+				}
+			},
+			{
+				test: /\.(png|jpe?g|gif)(\?.*)?$/,
+				use: [{
+					loader: 'url-loader',
+					options: {
+						limit: 8192,
+						name: rootResolve('dist/images/[hash:8].[ext]')
 					}
-				]
-      },
-      {
-        test: /\.m?js$/,
-				exclude: /(node_modules|bower_components)/,use: [
-					{
-						loader: 'happypack/loader',
-						options: {
-							id: 'babel',
-							name: 'css/[hash:18].[ext]',
-							// publicPath: '/'
-						}
-					}
-				]
-      }
-    ]
-  },
-  plugins: [
+				}]
+			},
+		]
+	},
+	plugins: [
 		new webpack.ProgressPlugin(),
-    new webpack.DefinePlugin({
-      NODE_ENV: JSON.stringify(process.env.NODE_ENV), // 当前使用环境
-      VERSION: JSON.stringify('0.1.0'),
-    }),
-		new HappyPack({
-			id: 'less',
-			loaders: [ 'style-loader', 'css-loader', 'postcss-loader', 'less-loader' ]
+		new webpack.DefinePlugin({
+			NODE_ENV: JSON.stringify(process.env.NODE_ENV), // 当前使用环境
+			VERSION: JSON.stringify('0.1.0'),
 		}),
+		new MiniCssExtractPlugin({
+			filename: "[name].[hash:8].css",
+			chunkFilename: "[id].css",
+    }),
+		// new HappyPack({
+		// 	id: 'less',
+		// 	// 'style-loader', 
+		// 	loaders: ['css-loader', 'postcss-loader', 'less-loader']
+		// }),
 		new HappyPack({
 			id: 'babel',
-			loaders: [ 'babel-loader?presets[]=@babel/preset-env' ]
+			loaders: ['babel-loader?presets[]=@babel/preset-env']
 		}),
-    new HtmlWebpackPlugin({template: './src/index.html'})
-  ]
+		new HtmlWebpackPlugin({ template: './src/index.html' })
+	]
 };

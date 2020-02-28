@@ -1,5 +1,5 @@
 const merge = require('webpack-merge');
-// const webpack = require('webpack');
+const webpack = require('webpack');
 const path = require('path');
 
 const base = require('./webpack.base.js');
@@ -12,5 +12,8 @@ module.exports = merge(base, {
     contentBase: path.join(__dirname, "dist"),
     compress: true,
     port: 3333
-  }
+  },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin()
+  ]
 });
