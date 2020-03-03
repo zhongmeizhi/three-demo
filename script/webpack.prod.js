@@ -50,7 +50,7 @@ module.exports = merge({
   plugins: [
     new CleanWebpackPlugin({
       cleanOnceBeforeBuildPatterns: [
-        'static', 'js', 'css', 'index.html', '*.js',
+        'assets', 'js', 'css', 'index.html', '*.js',
         '!manifest.dll.json', '!vendor.dll.js' // 不删除 dll 文件
       ],
     }),

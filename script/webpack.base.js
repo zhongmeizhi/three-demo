@@ -15,7 +15,7 @@ module.exports = {
 		extensions: ['.js', '.json'],
 		alias: {
 			'@': rootResolve('src'),
-			'@static': rootResolve('static'),
+			'@assets': rootResolve('src/assets'),
 		}
 	},
 	// externals: [''],
@@ -27,8 +27,6 @@ module.exports = {
 				loaders: [{
 					loader: MiniCssExtractPlugin.loader,
 					options: {
-						name: distResolve('css/[hash:8].[ext]'),
-						// publicPath: '../',
 					}
 				}, 'css-loader', 'postcss-loader', 'less-loader']
 			},
@@ -43,7 +41,7 @@ module.exports = {
 			// 			loader: 'happypack/loader',
 			// 			options: {
 			// 				id: 'less',
-			// 				name: distResolve('js/[hash:8].[ext]'),
+			// 				name: 'js/[hash:8].[ext]',
 			// 				// publicPath: '/'
 			// 			}
 			// 		}
@@ -55,17 +53,15 @@ module.exports = {
 				loader: 'happypack/loader',
 				options: {
 					id: 'babel',
-					// name: distResolve('js/[hash:8].[ext]'),
-					// publicPath: '/'
 				}
 			},
 			{
-				test: /\.(png|jpe?g|gif)(\?.*)?$/,
+				test: /\.(png|jpe?g|gif|jpg)(\?.*)?$/,
 				use: [{
 					loader: 'url-loader',
 					options: {
 						limit: 8192,
-						name: distResolve('images/[hash:8].[ext]')
+						name: 'assets/img/[hash:8].[ext]'
 					}
 				}]
 			},

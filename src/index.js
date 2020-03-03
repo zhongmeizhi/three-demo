@@ -2,40 +2,55 @@
 import * as THREE from 'three';
 import './styles/base.less';
 
+import imgNm from '@assets/img/nm.jpg';
+
 console.log(VERSION, NODE_ENV)
 
-var camera, scene, renderer;
-var geometry, material, mesh;
+var camera, scene, renderer, mesh;
 
 init();
 animate();
 
 function init() {
 
-	camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-	camera.position.z = 1;
-
 	scene = new THREE.Scene();
+	camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 100);
 
-	geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
-	material = new THREE.MeshNormalMaterial();
+	var light = new THREE.DirectionalLight(0xffffff);
+	light.position.set(0, 10, 100).normalize();
+	scene.add(light);
 
-	mesh = new THREE.Mesh( geometry, material );
-	scene.add( mesh );
+	var geometry = new THREE.CubeGeometry(10, 10, 10);
+	var material = new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture(imgNm) } );
 
-	renderer = new THREE.WebGLRenderer( { antialias: true } );
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( renderer.domElement );
+	mesh = new THREE.Mesh(geometry, material);
+	mesh.position.z = -50;
+	scene.add(mesh);
 
+	renderer = new THREE.WebGLRenderer();
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	document.body.appendChild(renderer.domElement);
+
+	window.addEventListener('resize', onWindowResize, false);
+
+	render();
 }
 
 function animate() {
+	mesh.rotation.x += .04;
+	mesh.rotation.y += .02;
 
-	requestAnimationFrame( animate );
+	render();
+	requestAnimationFrame(animate);
+}
 
-	mesh.rotation.x += 0.01;
-	mesh.rotation.y += 0.02;
+function render() {
+	renderer.render(scene, camera);
+}
 
-	renderer.render( scene, camera );
-
+function onWindowResize() {
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	render();
 }
