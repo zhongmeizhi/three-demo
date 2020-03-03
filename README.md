@@ -7,3 +7,7 @@
 > dll翻新：npm run dll
 
 > 打包: npm run build
+
+### 效果图
+
+![初期](preview/init.gif)
