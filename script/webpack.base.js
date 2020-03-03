@@ -68,6 +68,16 @@ module.exports = {
 					}
 				}]
 			},
+			{
+				test: /\.(glb)(\?.*)?$/,
+				use: [{
+					loader: 'url-loader',
+					options: {
+						limit: 8192,
+						name: 'assets/glb/[hash:8].[ext]'
+					}
+				}]
+			},
 		]
 	},
 	plugins: [
