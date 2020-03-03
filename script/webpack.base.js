@@ -27,6 +27,9 @@ module.exports = {
 				loaders: [{
 					loader: MiniCssExtractPlugin.loader,
 					options: {
+						esModule: true,
+						hmr: process.env.NODE_ENV === 'dev', // 热更新
+						// publicPath: '../',
 					}
 				}, 'css-loader', 'postcss-loader', 'less-loader']
 			},
